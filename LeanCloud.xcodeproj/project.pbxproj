@@ -7,21 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		096A4A014818A06913782930 /* Pods_LeanCloud.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D2C1D56715AFAFC431DD63C /* Pods_LeanCloud.framework */; };
 		7B2FD49721D3816E003B8383 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD49621D3816E003B8383 /* AppDelegate.swift */; };
-		7B2FD49921D3816E003B8383 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD49821D3816E003B8383 /* ViewController.swift */; };
 		7B2FD49C21D3816E003B8383 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B2FD49A21D3816E003B8383 /* Main.storyboard */; };
 		7B2FD49E21D38170003B8383 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B2FD49D21D38170003B8383 /* Assets.xcassets */; };
 		7B2FD4A121D38170003B8383 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B2FD49F21D38170003B8383 /* LaunchScreen.storyboard */; };
+		7B2FD4A921D38185003B8383 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7B2FD4A821D38185003B8383 /* Podfile */; };
+		7B2FD4AE21D38408003B8383 /* SignInVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4AD21D38408003B8383 /* SignInVC.swift */; };
+		7B2FD4B021D3848F003B8383 /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4AF21D3848F003B8383 /* SignUpVC.swift */; };
+		7B2FD4B221D384BF003B8383 /* ResetPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4B121D384BF003B8383 /* ResetPasswordVC.swift */; };
+		7B2FD4B521D3A420003B8383 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4B421D3A420003B8383 /* HomeVC.swift */; };
+		7B2FD4B721D3A4CC003B8383 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4B621D3A4CC003B8383 /* HeaderView.swift */; };
+		7B2FD4B921D3A8F7003B8383 /* PictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4B821D3A8F7003B8383 /* PictureCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		220EDAF2BD275B20F1DC1442 /* Pods-LeanCloud.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeanCloud.release.xcconfig"; path = "Target Support Files/Pods-LeanCloud/Pods-LeanCloud.release.xcconfig"; sourceTree = "<group>"; };
 		7B2FD49321D3816E003B8383 /* LeanCloud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeanCloud.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B2FD49621D3816E003B8383 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7B2FD49821D3816E003B8383 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		7B2FD49B21D3816E003B8383 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7B2FD49D21D38170003B8383 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B2FD4A021D38170003B8383 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7B2FD4A221D38170003B8383 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7B2FD4A821D38185003B8383 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		7B2FD4AA21D382C6003B8383 /* LeanCloud-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LeanCloud-Bridging-Header.h"; sourceTree = "<group>"; };
+		7B2FD4AD21D38408003B8383 /* SignInVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInVC.swift; sourceTree = "<group>"; };
+		7B2FD4AF21D3848F003B8383 /* SignUpVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
+		7B2FD4B121D384BF003B8383 /* ResetPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordVC.swift; sourceTree = "<group>"; };
+		7B2FD4B321D39D3E003B8383 /* Pacifico.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Pacifico.ttf; sourceTree = "<group>"; };
+		7B2FD4B421D3A420003B8383 /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
+		7B2FD4B621D3A4CC003B8383 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
+		7B2FD4B821D3A8F7003B8383 /* PictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
+		9D2C1D56715AFAFC431DD63C /* Pods_LeanCloud.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LeanCloud.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF7A929856307BBDF8731820 /* Pods-LeanCloud.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeanCloud.debug.xcconfig"; path = "Target Support Files/Pods-LeanCloud/Pods-LeanCloud.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +47,39 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				096A4A014818A06913782930 /* Pods_LeanCloud.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2342847C77BD84D45466919E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DF7A929856307BBDF8731820 /* Pods-LeanCloud.debug.xcconfig */,
+				220EDAF2BD275B20F1DC1442 /* Pods-LeanCloud.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		2D091524D90E7E2C2B636690 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9D2C1D56715AFAFC431DD63C /* Pods_LeanCloud.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7B2FD48A21D3816E003B8383 = {
 			isa = PBXGroup;
 			children = (
+				7B2FD4A821D38185003B8383 /* Podfile */,
 				7B2FD49521D3816E003B8383 /* LeanCloud */,
 				7B2FD49421D3816E003B8383 /* Products */,
+				2342847C77BD84D45466919E /* Pods */,
+				2D091524D90E7E2C2B636690 /* Frameworks */,
+				7B2FD4AA21D382C6003B8383 /* LeanCloud-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,11 +94,17 @@
 		7B2FD49521D3816E003B8383 /* LeanCloud */ = {
 			isa = PBXGroup;
 			children = (
-				7B2FD49621D3816E003B8383 /* AppDelegate.swift */,
-				7B2FD49821D3816E003B8383 /* ViewController.swift */,
-				7B2FD49A21D3816E003B8383 /* Main.storyboard */,
+				7B2FD4B321D39D3E003B8383 /* Pacifico.ttf */,
 				7B2FD49D21D38170003B8383 /* Assets.xcassets */,
 				7B2FD49F21D38170003B8383 /* LaunchScreen.storyboard */,
+				7B2FD49621D3816E003B8383 /* AppDelegate.swift */,
+				7B2FD4AD21D38408003B8383 /* SignInVC.swift */,
+				7B2FD4AF21D3848F003B8383 /* SignUpVC.swift */,
+				7B2FD4B121D384BF003B8383 /* ResetPasswordVC.swift */,
+				7B2FD4B421D3A420003B8383 /* HomeVC.swift */,
+				7B2FD4B621D3A4CC003B8383 /* HeaderView.swift */,
+				7B2FD4B821D3A8F7003B8383 /* PictureCell.swift */,
+				7B2FD49A21D3816E003B8383 /* Main.storyboard */,
 				7B2FD4A221D38170003B8383 /* Info.plist */,
 			);
 			path = LeanCloud;
@@ -71,9 +117,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7B2FD4A521D38170003B8383 /* Build configuration list for PBXNativeTarget "LeanCloud" */;
 			buildPhases = (
+				56F0B6C70FFA3A5913D81FE7 /* [CP] Check Pods Manifest.lock */,
 				7B2FD48F21D3816E003B8383 /* Sources */,
 				7B2FD49021D3816E003B8383 /* Frameworks */,
 				7B2FD49121D3816E003B8383 /* Resources */,
+				C1D2B3E70F03F4F20149571A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -96,6 +144,7 @@
 				TargetAttributes = {
 					7B2FD49221D3816E003B8383 = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
@@ -124,19 +173,74 @@
 			files = (
 				7B2FD4A121D38170003B8383 /* LaunchScreen.storyboard in Resources */,
 				7B2FD49E21D38170003B8383 /* Assets.xcassets in Resources */,
+				7B2FD4A921D38185003B8383 /* Podfile in Resources */,
 				7B2FD49C21D3816E003B8383 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		56F0B6C70FFA3A5913D81FE7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LeanCloud-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C1D2B3E70F03F4F20149571A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-LeanCloud/Pods-LeanCloud-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AVOSCloud/AVOSCloud.framework",
+				"${BUILT_PRODUCTS_DIR}/AVOSCloudIM/AVOSCloudIM.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AVOSCloud.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AVOSCloudIM.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LeanCloud/Pods-LeanCloud-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		7B2FD48F21D3816E003B8383 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7B2FD49921D3816E003B8383 /* ViewController.swift in Sources */,
+				7B2FD4AE21D38408003B8383 /* SignInVC.swift in Sources */,
+				7B2FD4B721D3A4CC003B8383 /* HeaderView.swift in Sources */,
+				7B2FD4B521D3A420003B8383 /* HomeVC.swift in Sources */,
+				7B2FD4B021D3848F003B8383 /* SignUpVC.swift in Sources */,
 				7B2FD49721D3816E003B8383 /* AppDelegate.swift in Sources */,
+				7B2FD4B921D3A8F7003B8383 /* PictureCell.swift in Sources */,
+				7B2FD4B221D384BF003B8383 /* ResetPasswordVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,8 +384,10 @@
 		};
 		7B2FD4A621D38170003B8383 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DF7A929856307BBDF8731820 /* Pods-LeanCloud.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D86GL839U9;
 				INFOPLIST_FILE = LeanCloud/Info.plist;
@@ -291,6 +397,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyw.test.LeanCloud;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "LeanCloud-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -298,8 +406,10 @@
 		};
 		7B2FD4A721D38170003B8383 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 220EDAF2BD275B20F1DC1442 /* Pods-LeanCloud.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D86GL839U9;
 				INFOPLIST_FILE = LeanCloud/Info.plist;
@@ -309,6 +419,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyw.test.LeanCloud;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "LeanCloud-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
