@@ -19,6 +19,9 @@
 		7B2FD4B521D3A420003B8383 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4B421D3A420003B8383 /* HomeVC.swift */; };
 		7B2FD4B721D3A4CC003B8383 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4B621D3A4CC003B8383 /* HeaderView.swift */; };
 		7B2FD4B921D3A8F7003B8383 /* PictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4B821D3A8F7003B8383 /* PictureCell.swift */; };
+		7B2FD4BB21D3D0E1003B8383 /* FollowersVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4BA21D3D0E1003B8383 /* FollowersVC.swift */; };
+		7B2FD4BD21D3D116003B8383 /* FollowersCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4BC21D3D116003B8383 /* FollowersCell.swift */; };
+		7B2FD4BF21D3E27A003B8383 /* GuestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2FD4BE21D3E27A003B8383 /* GuestVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +41,9 @@
 		7B2FD4B421D3A420003B8383 /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
 		7B2FD4B621D3A4CC003B8383 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		7B2FD4B821D3A8F7003B8383 /* PictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
+		7B2FD4BA21D3D0E1003B8383 /* FollowersVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersVC.swift; sourceTree = "<group>"; };
+		7B2FD4BC21D3D116003B8383 /* FollowersCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersCell.swift; sourceTree = "<group>"; };
+		7B2FD4BE21D3E27A003B8383 /* GuestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestVC.swift; sourceTree = "<group>"; };
 		9D2C1D56715AFAFC431DD63C /* Pods_LeanCloud.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LeanCloud.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF7A929856307BBDF8731820 /* Pods-LeanCloud.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeanCloud.debug.xcconfig"; path = "Target Support Files/Pods-LeanCloud/Pods-LeanCloud.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -104,6 +110,9 @@
 				7B2FD4B421D3A420003B8383 /* HomeVC.swift */,
 				7B2FD4B621D3A4CC003B8383 /* HeaderView.swift */,
 				7B2FD4B821D3A8F7003B8383 /* PictureCell.swift */,
+				7B2FD4BA21D3D0E1003B8383 /* FollowersVC.swift */,
+				7B2FD4BC21D3D116003B8383 /* FollowersCell.swift */,
+				7B2FD4BE21D3E27A003B8383 /* GuestVC.swift */,
 				7B2FD49A21D3816E003B8383 /* Main.storyboard */,
 				7B2FD4A221D38170003B8383 /* Info.plist */,
 			);
@@ -236,11 +245,14 @@
 			files = (
 				7B2FD4AE21D38408003B8383 /* SignInVC.swift in Sources */,
 				7B2FD4B721D3A4CC003B8383 /* HeaderView.swift in Sources */,
+				7B2FD4BB21D3D0E1003B8383 /* FollowersVC.swift in Sources */,
 				7B2FD4B521D3A420003B8383 /* HomeVC.swift in Sources */,
 				7B2FD4B021D3848F003B8383 /* SignUpVC.swift in Sources */,
 				7B2FD49721D3816E003B8383 /* AppDelegate.swift in Sources */,
+				7B2FD4BD21D3D116003B8383 /* FollowersCell.swift in Sources */,
 				7B2FD4B921D3A8F7003B8383 /* PictureCell.swift in Sources */,
 				7B2FD4B221D384BF003B8383 /* ResetPasswordVC.swift in Sources */,
+				7B2FD4BF21D3E27A003B8383 /* GuestVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
