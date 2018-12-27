@@ -15,13 +15,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        AVOSCloud.setApplicationId("uFlD9AlnfGVUHTUFioNShPvS-gzGzoHsz", clientKey: "K10GdXRuyqBLFwYBUgsvRe8a")
+        //如果想跟踪统计应用的打开情况，可以添加下面代码
+        AVAnalytics.trackAppOpened(launchOptions: launchOptions)
+        login()
         return true
+    }
+    
+    func login() {
+        //获取UserDefaults中存储的key为username的值
+        let username:String? = UserDefaults.standard.string(forKey: "username")
+        // 如果之前成功f登录过
+        if username != nil {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let myTabBar = storyboard.instantiateViewController(withIdentifier: "TabBar") as! UITabBarController
+            window?.rootViewController = myTabBar
+        }        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
