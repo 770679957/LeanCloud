@@ -255,6 +255,15 @@ class GuestVC: UICollectionViewController {
         
         self.navigationController?.pushViewController(followings, animated: true)
     }
+    
+    //当用户在集合视图中单击某个单元格会调用此方法
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        //发送post uuid 到 postuuid中
+        postuuid.append(puuidArray[indexPath.row])
+        //导航到postVC控制器
+        let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC")
+        self.navigationController?.pushViewController(postVC!, animated: true)
+    }
 
     
 }

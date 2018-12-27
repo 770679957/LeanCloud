@@ -60,6 +60,10 @@ class HeaderView: UICollectionReusableView {
         
         //对齐
         let width = UIScreen.main.bounds.width
+        
+        //设置头像圆角
+        avaImg.layer.cornerRadius = avaImg.frame.width / 2
+        avaImg.clipsToBounds = true
     }
     
     

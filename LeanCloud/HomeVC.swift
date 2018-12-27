@@ -230,4 +230,52 @@ class HomeVC: UICollectionViewController,UICollectionViewDelegateFlowLayout {
     @objc func reload(notification:Notification) {
         collectionView.reloadData()
     }
+    
+    //获取滚动视图的偏移量
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y >= scrollView.contentSize.height - self.view.frame.height {
+            self.loadMore()
+        }
+    }
+    
+    func loadMore() {
+        if page <= picArray.count {
+            page = page + 12
+            
+            
+            let query = AVQuery(className: "Posts")
+            query.whereKey("username", equalTo: guestArray.last?.username)
+            query.limit = page
+            query.findObjectsInBackground { (objects:[Any]?, error:Error?) in
+                //查询成功
+                if error == nil {
+                    //清空数组
+                    self.puuidArray.removeAll(keepingCapacity: false)
+                    self.picArray.removeAll(keepingCapacity: false)
+                    
+                    for object in objects! {
+                        //将查询到的数据添加到数组中
+                        self.puuidArray.append((object as AnyObject).value(forKey: "puuid") as! String)
+                        self.picArray.append((object as AnyObject).value(forKey: "pic") as! AVFile)
+                    }
+                    print("loaded + \(self.page)")
+                    self.collectionView?.reloadData()
+                }else {
+                    print(error?.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    //当用户在集合视图中单击某个单元格会调用此方法
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        //发送post uuid 到 postuuid中
+        postuuid.append(puuidArray[indexPath.row])
+        //导航到postVC控制器
+        let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC")
+        self.navigationController?.pushViewController(postVC!, animated: true)
+    }
+    
+    
+    
 }
