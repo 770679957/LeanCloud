@@ -18,6 +18,57 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
     @IBOutlet weak var commentTxt: UITextView!
     @IBOutlet weak var sendBtn: UIButton!
     
+    
+    @IBAction func sendBtn_clicked(_ sender: Any) {
+        //在表格中添加一行
+        usernameArray.append(AVUser.current()!.username!)
+        avaArray.append(AVUser.current()?.object(forKey: "ava") as! AVFile)
+        dateArray.append(Date())
+        commentArray.append(commentTxt.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
+        tableView.reloadData()
+        
+        //发送到云端
+        let commentObj = AVObject(className: "Comments")
+        commentObj["to"] = commentuuid.last!
+        commentObj["username"] = AVUser.current()?.username
+        commentObj["ava"] = AVUser.current()?.object(forKey: "ava")
+        commentObj["comment"] = commentTxt.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        commentObj.saveEventually()
+        
+        //scroll to bottom
+        self.tableView.scrollToRow(at: IndexPath(item: commentArray.count - 1, section: 0), at: .bottom, animated:  false)
+        
+        //重置UI
+        commentTxt.text = ""
+        commentTxt.frame.size.height = commentHeight
+        commentTxt.frame.size.height = tableViewHeight - keyboard.height - commentTxt.frame.height + commentHeight
+    }
+    
+    @IBAction func usernameBtn_clicked(_ sender: Any) {
+        //按钮的 index
+        let i = (sender as AnyObject).layer.value(forKey: "index") as! IndexPath
+        //通过i获取到用户所单击的单元格
+        let cell = tableView.cellForRow(at: i) as! CommentCell
+        //如果用户单击的事自己的username,则调用homeVC ，否则是GuestVC
+        if cell.usernameBtn.titleLabel?.text == AVUser.current()?.username{
+            let home = self.storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeVC
+            self.navigationController?.pushViewController(home, animated: true)
+        }else {
+            let query = AVUser.query()
+            query.whereKey("username", equalTo: cell.usernameBtn.titleLabel?.text)
+            query.findObjectsInBackground { (objects:[Any]?, error:Error?) in
+                if let object = objects?.last {
+                    guestArray.append(object as! AVUser)
+                    
+                    let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestVC
+                    self.navigationController?.pushViewController(guest, animated: true)
+
+                }
+            }
+        }
+    }
+    
+    
     var refresh = UIRefreshControl()
 
     // 重置UI的默认值
@@ -45,7 +96,7 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
         let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back(_:)))
         self.navigationItem.leftBarButtonItem = backBtn
         
-         self.tableView.backgroundColor = .red
+         self.tableView.backgroundColor = .white
         
         // 在开始的时候，禁止sendBtn按钮
       // self.sendBtn.isEnabled = false
@@ -239,6 +290,9 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
         if difference.weekOfMonth! >  0 {
             cell.dateLbl.text = "\(difference.weekOfMonth!) 周."
         }
+        
+        cell.usernameBtn.layer.setValue(indexPath, forKey: "index")
+        
        return cell
     }
     //给指定单元格估一个高度值
@@ -325,6 +379,95 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
                 })
             }
         }
+    }
+    
+    //设置所有单元格可编辑
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        //获取用户所滑动的单元格对象
+        let cell = tableView.cellForRow(at: indexPath) as! CommentCell
+        //Delete
+        let delete = UITableViewRowAction(style: .normal, title: "  ") { (UITableViewRowAction, IndexPath) in
+            //从云端删除评论
+            let commentQuery = AVQuery(className: "Comments")
+            commentQuery.whereKey("to", equalTo: commentuuid.last!)
+            commentQuery.whereKey("comment", equalTo: cell.commentLbl.text!)
+            commentQuery.findObjectsInBackground({ (objects:[Any]?, error:Error?) in
+                if error == nil {
+                    
+                    for object in objects! {
+                        
+                        (object as AnyObject).deleteEventually()
+                    }
+                }else {
+                    print(error?.localizedDescription)
+                }
+            })
+            //从表格视图中删除单元格
+            self.commentArray.remove(at: indexPath.row)
+            self.dateArray.remove(at: indexPath.row)
+            self.avaArray.remove(at: indexPath.row)
+            self.usernameArray.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
+            
+            //关闭单元格编辑状态
+            self.tableView.setEditing(false, animated: true)
+        }
+        
+        //Address
+        let address = UITableViewRowAction(style: .normal, title: "   ") {(action:UITableViewRowAction, indexPath: IndexPath) -> Void in
+            
+            // 在Text View中包含Address
+            self.commentTxt.text = "\(self.commentTxt.text + "@" + self.usernameArray[indexPath.row] + " ")"
+            // 让发送按钮生效
+            self.sendBtn.isEnabled = true
+            // 关闭单元格的编辑状态
+            self.tableView.setEditing(false, animated: true)
+        }
+        
+        //投诉评论
+        let complain = UITableViewRowAction(style: .normal, title: " ") { (action:UITableViewRowAction, indexPath:IndexPath) in
+            //发送投诉到云端
+            // 发送投诉到云端
+            let complainObj = AVObject(className: "Complain")
+            complainObj["by"] = AVUser.current()!.username
+            complainObj["post"] = commentuuid.last
+            complainObj["to"] = cell.commentLbl.text
+            complainObj["owner"] = cell.usernameBtn.titleLabel?.text
+
+            complainObj.saveInBackground({ (success:Bool, error:Error?) in
+                if success {
+                    self.alert(error: "投诉信息已经被成功提交！", message: "感谢您的支持，我们将关注您提交的投诉！")
+                }else{
+                    self.alert(error: "错误", message: error!.localizedDescription)
+                }
+            })
+            
+            // 关闭单元格的编辑状态
+            self.tableView.setEditing(false, animated: true)
+        }
+        
+        //按钮的背景颜色
+        delete.backgroundColor = UIColor(patternImage: UIImage(named: "delete.png")!)
+        address.backgroundColor = UIColor(patternImage: UIImage(named: "address.png")!)
+        complain.backgroundColor = UIColor(patternImage: UIImage(named: "complain.png")!)
+        //根据不同的情况生成不同的Action组
+        if cell.usernameBtn.titleLabel?.text == AVUser.current()!.username {
+            
+            return[delete,address]
+        }else if commentowner.last == AVUser.current()!.username {
+            
+            return[delete,address,complain]
+        }else {
+            return[address,complain]
+        }
+    }
+    
+    // 消息警告
+    func alert(error: String, message: String) {
+        let alert = UIAlertController(title: error, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
     }
     
     

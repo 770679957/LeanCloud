@@ -49,6 +49,7 @@ class PostVC: UITableViewController {
         commentuuid.append(cell.puuidLbl.text!)
         commentowner.append(cell.usernameBtn.titleLabel!.text!)
         
+        
         // 需要在故事板中查看Storyboard ID是否设置
         let comment = self.storyboard?.instantiateViewController(withIdentifier: "CommentVC") as! CommentVC
         self.navigationController?.pushViewController(comment, animated: true)
