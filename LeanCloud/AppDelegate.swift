@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AVOSCloud.setApplicationId("uFlD9AlnfGVUHTUFioNShPvS-gzGzoHsz", clientKey: "K10GdXRuyqBLFwYBUgsvRe8a")
         //如果想跟踪统计应用的打开情况，可以添加下面代码
         AVAnalytics.trackAppOpened(launchOptions: launchOptions)
+        window?.backgroundColor = .white
+        
         login()
         return true
     }
