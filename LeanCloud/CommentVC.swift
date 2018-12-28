@@ -11,7 +11,8 @@ import UIKit
 var commentuuid = [String]()
 var commentowner = [String]()
 
-class CommentVC: UIViewController, UITextViewDelegate {
+class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITableViewDataSource{
+  
 //221
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var commentTxt: UITextView!
@@ -26,6 +27,14 @@ class CommentVC: UIViewController, UITextViewDelegate {
 
     // 存储keyboard大小的变量
     var keyboard = CGRect()
+    
+    //将从云端获取到的数据写进数组
+    var usernameArray = [String]()
+    var avaArray = [AVFile]()
+    var commentArray = [String]()
+    var dateArray = [Date]()
+    
+    var page : Int = 15
     
     
     override func viewDidLoad() {
@@ -56,7 +65,8 @@ class CommentVC: UIViewController, UITextViewDelegate {
         self.view.isUserInteractionEnabled = true
         self.view.addGestureRecognizer(hideTap)
 
-        
+        loadComments()
+        loadMore()
         alignment()
 
        
@@ -101,6 +111,10 @@ class CommentVC: UIViewController, UITextViewDelegate {
         commentY = commentTxt.frame.origin.y
         
         commentTxt.delegate = self
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        
     }
     
     @objc func back(_ sender: UIBarButtonItem) {
@@ -145,6 +159,175 @@ class CommentVC: UIViewController, UITextViewDelegate {
     @objc func hideKeyboardTap(recognizer:UITapGestureRecognizer) {
         self.view.endEditing(true)
     }
+    
+    //当输入的时候会调用此方法
+    func textViewDidChange(_ textView: UITextView) {
+        //如果没有输入则禁止按钮
+        let spacing = CharacterSet.whitespacesAndNewlines
+        if !commentTxt.text.trimmingCharacters(in: spacing).isEmpty {
+            
+            sendBtn.isEnabled = true
+        }else {
+            
+            sendBtn.isEnabled = false
+        }
+        
+        if textView.contentSize.height > textView.frame.height && textView.frame.height < 130 {
+            
+            let difference = textView.contentSize.height - textView.frame.height
+            textView.frame.origin.y = textView.frame.origin.y - difference
+            textView.frame.size.height = textView.contentSize.height
+            
+            // 上移tableView
+            if textView.contentSize.height + keyboard.height + commentY >= tableView.frame.height {
+                tableView.frame.size.height = tableView.frame.size.height - difference
+            }
+        }else if textView.contentSize.height < textView.frame.height {
+            let difference = textView.frame.height - textView.contentSize.height
+            
+            textView.frame.origin.y = textView.frame.origin.y + difference
+            textView.frame.size.height = textView.contentSize.height
+            
+            // 上移tableView
+            if textView.contentSize.height + keyboard.height + commentY > tableView.frame.height {
+                tableView.frame.size.height = tableView.frame.size.height + difference
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return commentArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentCell
+        
+        cell.usernameBtn.setTitle((usernameArray[indexPath.row]), for: .normal)
+        cell.usernameBtn.sizeToFit()
+        cell.commentLbl.text = commentArray[indexPath.row]
+        avaArray[indexPath.row].getDataInBackground { (data:Data?, error:Error?) in
+            cell.avaImg.image = UIImage(data: data!)
+        }
+        
+        //获取帖子的创建时间
+        let from = dateArray[indexPath.row]
+        let now = Date()
+        let components : Set<Calendar.Component> = [.second, .minute, .hour, .day, .weekOfMonth]
+        let difference = Calendar.current.dateComponents(components, from: from, to: now)
+        
+        
+        if difference.second! <= 0 {
+            cell.dateLbl.text = "现在"
+        }
+        
+        if difference.second! > 0 && difference.minute! <= 0 {
+            cell.dateLbl.text = "\(difference.second) 秒."
+        }
+        
+        if difference.minute! > 0 && difference.hour! <= 0 {
+            cell.dateLbl.text = "\(difference.minute!) 分."
+        }
+        
+        if difference.hour! > 0 && difference.day! <= 0 {
+            cell.dateLbl.text = "\(difference.hour!) 时."
+        }
+        
+        if difference.day! > 0 && difference.weekOfMonth! <= 0 {
+            cell.dateLbl.text = "\(difference.day!) 天."
+        }
+        
+        if difference.weekOfMonth! >  0 {
+            cell.dateLbl.text = "\(difference.weekOfMonth!) 周."
+        }
+       return cell
+    }
+    //给指定单元格估一个高度值
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
+    func loadComments() {
+        //计算评论的数量
+        let countQuery = AVQuery(className: "Comments")
+        countQuery.whereKey("to", equalTo: commentuuid.last!)
+        countQuery.countObjectsInBackground { (count:Int, error:Error?) in
+            
+            if self.page < count {
+                self.refresh.addTarget(self, action: #selector(self.loadMore), for: .valueChanged)
+                self.tableView.addSubview(self.refresh)
+            }
+            
+            let query = AVQuery(className: "Comments")
+            query.whereKey("to", equalTo: commentuuid.last!)
+            query.skip = count - self.page
+            query.addAscendingOrder("createdAt")
+            query.findObjectsInBackground({ (objects:[Any]?, error:Error?) in
+                if error == nil {
+                    self.usernameArray.removeAll(keepingCapacity: false)
+                    self.commentArray.removeAll(keepingCapacity: false)
+                    self.avaArray.removeAll(keepingCapacity: false)
+                    self.dateArray.removeAll(keepingCapacity: false)
+                    
+                    for object in objects! {
+                        self.usernameArray.append((object as AnyObject).object(forKey: "username") as! String)
+                        self.avaArray.append((object as AnyObject).object(forKey: "ava") as! AVFile)
+                        self.commentArray.append((object as AnyObject).object(forKey: "comment") as! String)
+                        self.dateArray.append((object as AnyObject).createdAt!)
+                        self.tableView.reloadData()
+                        self.tableView.scrollToRow(at: IndexPath(row: self.commentArray.count - 1, section: 0), at: .bottom, animated: false)
+                    }
+                }else {
+                   print(error?.localizedDescription)
+                }
+            })
+        }
+    }
+    
+    @objc func loadMore() {
+        // 合计出所有的评论的数量
+        let countQuery = AVQuery(className: "Comments")
+        countQuery.whereKey("to", equalTo: commentuuid.last!)
+        countQuery.countObjectsInBackground { (count:Int, error:Error?) in
+            //让refresher停止刷新动画
+            self.refresh.endRefreshing()
+            
+            if self.page >= count {
+                
+                self.refresh.removeFromSuperview()
+            }
+            
+            //载入更多的评论
+            if self.page < count {
+                self.page = self.page + 15
+                
+                //从云端查询page个记录
+                let query = AVQuery(className: "Comments")
+                query.whereKey("to", equalTo: commentuuid.last!)
+                query.skip = count - self.page
+                query.addAscendingOrder("createdAt")
+                query.findObjectsInBackground({ (objects:[Any]?, error:Error?) in
+                    if error == nil {
+                        self.usernameArray.removeAll(keepingCapacity: false)
+                        self.commentArray.removeAll(keepingCapacity: false)
+                        self.avaArray.removeAll(keepingCapacity: false)
+                        self.dateArray.removeAll(keepingCapacity: false)
+                        
+                        for object in objects! {
+                            self.usernameArray.append((object as AnyObject).object(forKey: "username") as! String)
+                            self.avaArray.append((object as AnyObject).object(forKey: "ava") as! AVFile)
+                            self.commentArray.append((object as AnyObject).object(forKey: "comment") as! String)
+                            self.dateArray.append((object as AnyObject).createdAt!)
+                        }
+                        self.tableView.reloadData()
+                    }else {
+                        print(error?.localizedDescription)
+                    }
+                })
+            }
+        }
+    }
+    
+    
 
 
 }
