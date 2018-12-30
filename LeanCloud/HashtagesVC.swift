@@ -28,7 +28,8 @@ class HashtagesVC: UICollectionViewController,UICollectionViewDelegateFlowLayout
         
         //定义导航栏中新的返回按钮
         self.navigationItem.hidesBackButton = true
-        let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back(_:)))
+        //let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back(_:)))
+        let backBtn = UIBarButtonItem(image: UIImage(named: "back.png"), style: .plain, target: self, action: #selector(back(_:)))
         self.navigationItem.leftBarButtonItem = backBtn
         
         // 实现向右划动返回

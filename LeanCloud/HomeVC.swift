@@ -47,6 +47,7 @@ class HomeVC: UICollectionViewController,UICollectionViewDelegateFlowLayout {
         
         //设置集合图形在垂直方向上有反弹的效果
         self.collectionView.alwaysBounceVertical = true
+        self.collectionView?.bounces = true
         
         // 从EditVC类接收Notification
         NotificationCenter.default.addObserver(self, selector: #selector(reload(notification:)), name: NSNotification.Name(rawValue: "reload"), object: nil)
