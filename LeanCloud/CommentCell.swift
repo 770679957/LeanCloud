@@ -17,7 +17,6 @@ class CommentCell: UITableViewCell {
     @IBOutlet weak var dateLbl: UILabel!
     
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -54,13 +53,6 @@ class CommentCell: UITableViewCell {
         
         avaImg.layer.cornerRadius = avaImg.frame.width / 2
         avaImg.clipsToBounds = true
-       
     }
-
-//    override func setSelected(_ selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//
-//        
-//    }
-
+    
 }

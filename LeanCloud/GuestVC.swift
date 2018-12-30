@@ -34,7 +34,8 @@ class GuestVC: UICollectionViewController {
         
         //定义导航栏中新的返回按钮
         self.navigationItem.hidesBackButton = true
-        let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        //let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        let backBtn = UIBarButtonItem(image: UIImage(named: "back.png"), style: .plain, target: self, action: #selector(back(_:)))
         self.navigationItem.leftBarButtonItem = backBtn
         
         //实现向右滑动返回
@@ -131,6 +132,13 @@ class GuestVC: UICollectionViewController {
             if error == nil {
                 //判断是否有用户信息
                 guard let objects = objects, objects.count > 0 else {
+                    let alert = UIAlertController(title: "\(guestArray.last?.username)", message: "用尽洪荒之力，画也没有g发现该用户的存在！", preferredStyle:.alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: { (UIAlertAction) in
+                        _ = self.navigationController?.popViewController(animated: true)
+                    })
+                    alert.addAction(ok)
+                    self.present(alert,animated: true, completion: nil)
+                    
                     return
                 }
                 //找到用户的相关信息

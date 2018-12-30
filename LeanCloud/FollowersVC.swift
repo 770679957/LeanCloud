@@ -18,6 +18,19 @@ class FollowersVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //定义导航栏中新的返回按钮
+        self.navigationItem.hidesBackButton = true
+        //let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        let backBtn = UIBarButtonItem(image: UIImage(named: "back.png"), style: .plain, target: self, action: #selector(back(_:)))
+        self.navigationItem.leftBarButtonItem = backBtn
+        
+        //实现向右滑动返回
+        let backSwipe = UISwipeGestureRecognizer(target: self, action: #selector(back))
+        backSwipe.direction = .right
+        self.view.addGestureRecognizer(backSwipe)
+        
+        
         //导航栏标题
         self.navigationItem.title = show
          self.tableView.rowHeight = 80
@@ -124,6 +137,11 @@ class FollowersVC: UITableViewController {
             self.navigationController?.pushViewController(guest, animated: true)
         }
         
+    }
+    
+    @objc func back(_:UIBarButtonItem) {
+        //退回到之前的控制器
+       _ = self.navigationController?.popViewController(animated: true)
     }
  
 

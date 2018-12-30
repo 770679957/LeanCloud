@@ -57,13 +57,15 @@ class HeaderView: UICollectionReusableView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+       
         //对齐
         let width = UIScreen.main.bounds.width
         
         //设置头像圆角
         avaImg.layer.cornerRadius = avaImg.frame.width / 2
         avaImg.clipsToBounds = true
+        
+        button.layer.cornerRadius = button.frame.width / 50
     }
     
     

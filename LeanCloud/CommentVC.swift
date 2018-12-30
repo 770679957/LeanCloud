@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVOSCloud
 
 var commentuuid = [String]()
 var commentowner = [String]()
@@ -17,8 +18,8 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var commentTxt: UITextView!
     @IBOutlet weak var sendBtn: UIButton!
-    
-    
+  
+ 
     @IBAction func sendBtn_clicked(_ sender: Any) {
         //在表格中添加一行
         usernameArray.append(AVUser.current()!.username!)
@@ -34,6 +35,39 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
         commentObj["ava"] = AVUser.current()?.object(forKey: "ava")
         commentObj["comment"] = commentTxt.text.trimmingCharacters(in: .whitespacesAndNewlines)
         commentObj.saveEventually()
+        //发送hashtag到云端
+        let words:[String] = commentTxt.text.components(separatedBy: CharacterSet.whitespacesAndNewlines)
+        
+        for var word in words {
+            //定义正则表达式
+            let pattern = "#[^#]+";
+            let regular = try! NSRegularExpression(pattern: pattern, options:.caseInsensitive)
+            let results = regular.matches(in: word, options: .reportProgress , range: NSMakeRange(0, word.characters.count))
+            
+            //输出截取结果
+            print("符合的结果有\(results.count)个")
+            for result in results {
+                word = (word as NSString).substring(with: result.range)
+            }
+            
+            if word.hasPrefix("#") {
+                word = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
+                word = word.trimmingCharacters(in: CharacterSet.symbols)
+                
+                let hashtagObj = AVObject(className: "Hashtags")
+                hashtagObj["to"] = commentuuid.last
+                hashtagObj["by"] = AVUser.current()!.username
+                hashtagObj["hashtag"] = word.lowercased()
+                hashtagObj["comment"] = commentTxt.text
+                hashtagObj.saveInBackground({ (success:Bool, error:Error?) in
+                    if success {
+                        print("hashtag \(word) 已经被创建。")
+                    }else {
+                        print(error?.localizedDescription)
+                    }
+                })
+            }
+        }
         
         //scroll to bottom
         self.tableView.scrollToRow(at: IndexPath(item: commentArray.count - 1, section: 0), at: .bottom, animated:  false)
@@ -41,7 +75,8 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
         //重置UI
         commentTxt.text = ""
         commentTxt.frame.size.height = commentHeight
-        commentTxt.frame.size.height = tableViewHeight - keyboard.height - commentTxt.frame.height + commentHeight
+        commentTxt.frame.origin.y = sendBtn.frame.origin.y
+        tableView.frame.size.height = tableViewHeight - keyboard.height - commentTxt.frame.height + commentHeight
     }
     
     @IBAction func usernameBtn_clicked(_ sender: Any) {
@@ -93,13 +128,14 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
         
         self.navigationItem.title = "评论"
         self.navigationItem.hidesBackButton = true
-        let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back(_:)))
+        //let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back(_:)))
+        let backBtn = UIBarButtonItem(image: UIImage(named: "back.png"), style: .plain, target: self, action: #selector(back(_:)))
         self.navigationItem.leftBarButtonItem = backBtn
         
-         self.tableView.backgroundColor = .white
+         //self.tableView.backgroundColor = .white
         
         // 在开始的时候，禁止sendBtn按钮
-      // self.sendBtn.isEnabled = false
+        self.sendBtn.isEnabled = false
         
         let backSwipe = UISwipeGestureRecognizer(target: self, action: #selector(back(_:)))
         backSwipe.direction = .right
@@ -291,13 +327,54 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
             cell.dateLbl.text = "\(difference.weekOfMonth!) 周."
         }
         
+        //点击这个帖子之后可以浏览这个人发布的所有信息
+        cell.commentLbl.userHandleLinkTapHandler = { label, handle, rang in
+           
+            var mention = handle
+            mention = String(mention.characters.dropFirst())
+            
+            if mention.lowercased() == AVUser.current()!.username {
+                let home = self.storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeVC
+                self.navigationController?.pushViewController(home, animated: true)
+            }else {
+                let query = AVUser.query()
+                query.whereKey("username", equalTo: mention.lowercased())
+                query.findObjectsInBackground({ (objects:[Any]?, error:Error?) in
+                    if let object = objects?.last {
+                        guestArray.append(object as! AVUser)
+                        
+                        let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestVC
+                        self.navigationController?.pushViewController(guest, animated: true)
+                    }
+                })
+            }
+        }
+        
+        // #hashtag is tapped
+        cell.commentLbl.hashtagLinkTapHandler = { label, handle, rang in
+            var mention = handle
+            mention = String(mention.characters.dropFirst())
+            hashtag.append(mention)
+            
+            let hashvc = self.storyboard?.instantiateViewController(withIdentifier: "HashtagesVC") as! HashtagesVC
+            self.navigationController?.pushViewController(hashvc, animated: true)
+            
+        }
+        
+        
+        
         cell.usernameBtn.layer.setValue(indexPath, forKey: "index")
         
        return cell
     }
     //给指定单元格估一个高度值
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
+        return  UITableView.automaticDimension
+    }
+    
+    // 所有单元格可编辑
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
     }
     
     func loadComments() {
@@ -402,6 +479,20 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
                     print(error?.localizedDescription)
                 }
             })
+            
+            //  从云端删除 hashtag
+            let hashtagQuery = AVQuery(className: "Hashtags")
+            hashtagQuery.whereKey("to", equalTo: commentuuid.last)
+            hashtagQuery.whereKey("by", equalTo: cell.usernameBtn.titleLabel?.text)
+            hashtagQuery.whereKey("comment", equalTo: cell.commentLbl.text)
+            hashtagQuery.findObjectsInBackground({ (object:[Any]?, error:Error?) in
+                if error == nil {
+                    
+                    (object as AnyObject).deleteEventually()
+                }
+            })
+            
+            
             //从表格视图中删除单元格
             self.commentArray.remove(at: indexPath.row)
             self.dateArray.remove(at: indexPath.row)

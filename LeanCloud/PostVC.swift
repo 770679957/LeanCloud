@@ -21,6 +21,118 @@ class PostVC: UITableViewController {
     var titleArray = [String]()
     
     
+    @IBAction func moreBtn_clicked(_ sender: Any) {
+        
+        let i = (sender as AnyObject).layer.value(forKey: "index") as! IndexPath
+        let cell = tableView.cellForRow(at: i) as! PostCell
+        //删除操作
+        let delete = UIAlertAction(title: "删除", style:.default) { (UIAlertAction) ->Void in
+            self.usernameArray.remove(at: i.row)
+            self.avaArray.remove(at: i.row)
+            self.picArray.remove(at: i.row)
+            self.dateArray.remove(at: i.row)
+            self.titleArray.remove(at: i.row)
+            self.puuidArray.remove(at: i.row)
+        }
+        
+        //删除云端的记录
+        let postQuery = AVQuery(className: "Posts")
+        postQuery.whereKey("puuid", equalTo: cell.puuidLbl.text)
+        postQuery.findObjectsInBackground { (objects:[Any]?, error:Error?) in
+            if error == nil {
+                for object in objects! {
+                    (object as AnyObject).deleteInBackground({ (success:Bool, error:Error?) in
+                        if success {
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "uploaded"), object: nil)
+                            
+                            //销毁当前控制器
+                            _ = self.navigationController?.popViewController(animated: true)
+                        }else {
+                           print(error?.localizedDescription)
+                        }
+                    })
+                }
+            }
+        }
+        
+        //删除帖子的like记录
+        let likeQuery = AVQuery(className: "Likes")
+        likeQuery.whereKey("to", equalTo: cell.puuidLbl.text)
+        likeQuery.findObjectsInBackground { (objects:[Any]?, error:Error?) in
+            if error == nil {
+                for object in objects! {
+                    (object as AnyObject).deleteEventually()
+                }
+            }
+        }
+        
+        //删除帖子相关的评论
+        let commentQuery = AVQuery(className: "Comments")
+        commentQuery.whereKey("to", equalTo: cell.puuidLbl.text)
+        commentQuery.findObjectsInBackground { (objects:[Any]?, error:Error?) in
+            if error == nil {
+                for object in objects! {
+                    (object as AnyObject).deleteEventually()
+                }
+            }
+        }
+        
+        let hashtagQuery = AVQuery(className: "Hashtags")
+        hashtagQuery.whereKey("to", equalTo: cell.puuidLbl.text)
+        hashtagQuery.findObjectsInBackground { (objects:[Any]?, error:Error?) in
+            if error == nil {
+                for object in objects! {
+                    (object as AnyObject).deleteEventually()
+                }                
+            }
+        }
+        
+        
+        
+        //发送投诉到云端的Complain数据表
+        let complain = UIAlertAction(title: "投诉", style:.default) { (UIAlertAction) in
+            let complainObject = AVObject(className: "Complain")
+            complainObject["by"] = AVUser.current()!.username
+            complainObject["post"] = cell.puuidLbl.text
+            complainObject["to"] = cell.titleLbl.text
+            complainObject["owner"] = cell.usernameBtn.titleLabel?.text
+            complainObject.saveInBackground({ (success:Bool, error:Error?) in
+                if success {
+                    self.alert(error: "投诉信息已经被成功提交！", message: "感谢您的支持，我们将关注您提交的投诉！")
+                }else{
+                    self.alert(error: "错误", message: error!.localizedDescription)
+                }
+            })
+        }
+         
+        // 取消操作
+        let cancel = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        
+        // 创建菜单控制器
+        let menu = UIAlertController(title: "菜单选项", message: nil, preferredStyle: .actionSheet)
+        
+        if cell.usernameBtn.titleLabel?.text == AVUser.current()!.username {
+            menu.addAction(delete)
+            menu.addAction(cancel)
+        }else {
+            menu.addAction(complain)
+            menu.addAction(cancel)
+        }
+        
+        // 显示菜单
+        self.present(menu, animated: true, completion: nil)
+    }
+    
+    // 消息警告
+    func alert(error: String, message: String) {
+        let alert = UIAlertController(title: error, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    
     @IBAction func usernameBtn_clicked(_ sender: Any) {
         
         // 按钮的 index
@@ -61,7 +173,8 @@ class PostVC: UITableViewController {
         
         //定义新的返回按钮
         self.navigationItem.hidesBackButton = true
-        let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back(_:)))
+        //let backBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back(_:)))
+        let backBtn = UIBarButtonItem(image: UIImage(named: "back.png"), style: .plain, target: self, action: #selector(back(_:)))
         self.navigationItem.leftBarButtonItem = backBtn
         self.navigationItem.title = "照 片"
         
@@ -124,12 +237,10 @@ class PostVC: UITableViewController {
         
         //通过数组信息关联单元格的UI控件
         cell.usernameBtn.setTitle(usernameArray[indexPath.row], for: .normal)
+        cell.usernameBtn.sizeToFit()
         cell.puuidLbl.text = puuidArray[indexPath.row]
         cell.titleLbl.text = titleArray[indexPath.row]
-        
-        //调整自身的大小
         cell.titleLbl.sizeToFit()
-        cell.usernameBtn.sizeToFit()
         
         //配置用户头像
         avaArray[indexPath.row].getDataInBackground { (data:Data?, error:Error?) in
@@ -196,6 +307,42 @@ class PostVC: UITableViewController {
         //将indexPath复制给usernameBtn的layer属性的自定义变量
         cell.usernameBtn.layer.setValue(indexPath, forKey: "index")
         cell.commentBtn.layer.setValue(indexPath, forKey: "index")
+        cell.moreBtn.layer.setValue(indexPath, forKey: "index")
+        
+        // @mentions is tapped
+        cell.titleLbl.userHandleLinkTapHandler = { label, handle, rang in
+            
+            var mention = handle
+            mention = String(mention.characters.dropFirst())
+            
+            if mention.lowercased() == AVUser.current()!.username {
+                let home = self.storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeVC
+                self.navigationController?.pushViewController(home, animated: true)
+            }else {
+                let query = AVUser.query()
+                query.whereKey("username", equalTo: mention.lowercased())
+                query.findObjectsInBackground({ (objects:[Any]?, error:Error?) in
+                    if let object = objects?.last {
+                        guestArray.append(object as! AVUser)
+                        
+                        let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestVC
+                        self.navigationController?.pushViewController(guest, animated: true)
+                    }
+                })
+            }
+        }
+        
+        // #hashtag is tapped
+        cell.titleLbl.hashtagLinkTapHandler = { label, handle, rang in
+            var mention = handle
+            mention = String(mention.characters.dropFirst())
+            hashtag.append(mention.lowercased())
+            
+            let hashvc = self.storyboard?.instantiateViewController(withIdentifier: "HashtagesVC") as! HashtagesVC
+            self.navigationController?.pushViewController(hashvc, animated: true)
+            
+        }
+
         
         
          return cell

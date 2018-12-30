@@ -32,8 +32,9 @@ class UploadVC: UIViewController,UIImagePickerControllerDelegate,UINavigationCon
         let object = AVObject(className: "Posts")
         object["username"] = AVUser.current()?.username
         object["ava"] = AVUser.current()?.value(forKey: "ava") as! AVFile
-        object["puuid"] = "\(AVUser.current()!.username!) \(NSUUID().uuidString)"
-        
+        //object["puuid"] = "\(AVUser.current()!.username!) \(NSUUID().uuidString)"
+        let uuid = NSUUID().uuidString
+        object["puuid"] = "\(AVUser.current()!.username!) \(uuid)"
         //titleTxt 是否为空
         if titleView.text.isEmpty {
             object["title"] = ""
@@ -46,6 +47,41 @@ class UploadVC: UIViewController,UIImagePickerControllerDelegate,UINavigationCon
         let imageData = UIImage.jpegData(picImg.image!)(compressionQuality: 0.5)!
         let imageFile = AVFile(data: imageData, name: "Post.jpg")
         object["pic"] = imageFile
+        
+        //发送hashtag到云端
+        let words:[String] = titleView.text.components(separatedBy: CharacterSet.whitespacesAndNewlines)
+        
+        for var word in words {
+            //定义正则表达式
+            let pattern = "#[^#]+";
+            let regular = try! NSRegularExpression(pattern: pattern, options:.caseInsensitive)
+            let results = regular.matches(in: word, options: .reportProgress , range: NSMakeRange(0, word.characters.count))
+            
+            //输出截取结果
+            print("符合的结果有\(results.count)个")
+            for result in results {
+                word = (word as NSString).substring(with: result.range)
+            }
+            
+            if word.hasPrefix("#") {
+                word = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
+                word = word.trimmingCharacters(in: CharacterSet.symbols)
+                
+                let hashtagObj = AVObject(className: "Hashtags")
+                //hashtagObj["to"] = commentuuid.last
+                hashtagObj["to"] = "\(AVUser.current()!.username!) \(uuid)"
+                hashtagObj["by"] = AVUser.current()!.username
+                hashtagObj["hashtag"] = word.lowercased()
+                hashtagObj["comment"] = titleView.text
+                hashtagObj.saveInBackground({ (success:Bool, error:Error?) in
+                    if success {
+                        print("hashtag \(word) 已经被创建。")
+                    }else {
+                        print(error?.localizedDescription)
+                    }
+                })
+            }
+        }
         
         //将数据存到leancloud云端
         object.saveInBackground { (success:Bool, error:Error?) in
