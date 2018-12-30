@@ -13,7 +13,7 @@ class CommentCell: UITableViewCell {
     
     @IBOutlet weak var avaImg: UIImageView!
     @IBOutlet weak var usernameBtn: UIButton!
-    @IBOutlet weak var commentLbl: UILabel!
+    @IBOutlet weak var commentLbl: KILabel!
     @IBOutlet weak var dateLbl: UILabel!
     
     
@@ -57,10 +57,10 @@ class CommentCell: UITableViewCell {
        
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        
-    }
+//    override func setSelected(_ selected: Bool, animated: Bool) {
+//        super.setSelected(selected, animated: animated)
+//
+//        
+//    }
 
 }
