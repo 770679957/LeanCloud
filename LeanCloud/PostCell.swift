@@ -39,7 +39,21 @@ class PostCell: UITableViewCell {
                     self.likeBtn.setTitle("like", for: .normal)
                     self.likeBtn.setBackgroundImage(UIImage(named: "like.png"), for: .normal)
                     
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "liked"), object: nil)                    
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "liked"), object: nil)
+                    
+                    
+                    // 点击喜爱按钮后添加消息通知
+                    if self.usernameBtn.titleLabel?.text != AVUser.current()?.username {
+                        let newsObj = AVObject(className: "News")
+                        newsObj["by"] = AVUser.current()?.username
+                        newsObj["ava"] = AVUser.current()?.object(forKey: "ava") as! AVFile
+                        newsObj["to"] = self.usernameBtn.titleLabel?.text
+                        newsObj["owner"] = self.usernameBtn.titleLabel?.text
+                        newsObj["puuid"] = self.puuidLbl.text
+                        newsObj["type"] = "like"
+                        newsObj["checked"] = "no"
+                        newsObj.saveEventually()
+                    }
                 }
             }
         }else{
@@ -57,6 +71,22 @@ class PostCell: UITableViewCell {
                             
                             //如果设置为喜爱，发送请求
                             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "liked"), object: nil)
+                            
+                            
+                            // 点击喜爱按钮后删除消息通知
+                            let newsQuery = AVQuery(className: "News")
+                            newsQuery.whereKey("by", equalTo: AVUser.current()?.username)
+                            newsQuery.whereKey("to", equalTo: self.usernameBtn.titleLabel?.text)
+                            newsQuery.whereKey("puuid", equalTo: self.puuidLbl.text)
+                            newsQuery.whereKey("type", equalTo: "like")
+                            
+                            newsQuery.findObjectsInBackground{ (objects:[Any]?, error:Error?) in
+                                if error == nil {
+                                    for object in objects! {
+                                        (object as AnyObject).deleteEventually()
+                                    }
+                                }
+                            }
                         }
                     })
                 }
@@ -117,6 +147,19 @@ class PostCell: UITableViewCell {
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "liked"), object: nil)
                     
                     
+                    
+                    // 点击喜爱按钮后添加消息通知
+                    if self.usernameBtn.titleLabel?.text != AVUser.current()?.username {
+                        let newsObj = AVObject(className: "News")
+                        newsObj["by"] = AVUser.current()?.username
+                        newsObj["ava"] = AVUser.current()?.object(forKey: "ava") as! AVFile
+                        newsObj["to"] = self.usernameBtn.titleLabel?.text
+                        newsObj["owner"] = self.usernameBtn.titleLabel?.text
+                        newsObj["puuid"] = self.puuidLbl.text
+                        newsObj["type"] = "like"
+                        newsObj["checked"] = "no"
+                        newsObj.saveEventually()
+                    }
                 }
             }
         }

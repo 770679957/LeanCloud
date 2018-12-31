@@ -69,6 +69,42 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
             }
         }
         
+        
+        // STEP 4. 当遇到@mention发送通知
+        var mentionCreated = Bool()
+        
+        for var word in words {
+            if word.hasPrefix("@") {
+                word = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
+                word = word.trimmingCharacters(in: CharacterSet.symbols)
+                
+                let newsObj = AVObject(className: "News")
+                newsObj["by"] = AVUser.current()!.username
+                newsObj["ava"] = AVUser.current()!.object(forKey: "ava") as! AVFile
+                newsObj["to"] = word
+                newsObj["owner"] = commentowner.last
+                newsObj["puuid"] = commentuuid.last
+                newsObj["type"] = "mention"
+                newsObj["checked"] = "no"
+                newsObj.saveEventually()
+                
+                mentionCreated = true
+            }
+        }
+        
+        // STEP 5. 发送评论时候的通知
+        if commentowner.last != AVUser.current()?.username && mentionCreated == false {
+            let newsObj = AVObject(className: "News")
+            newsObj["by"] = AVUser.current()?.username
+            newsObj["ava"] = AVUser.current()?.object(forKey: "ava") as! AVFile
+            newsObj["to"] = commentowner.last
+            newsObj["owner"] = commentowner.last
+            newsObj["puuid"] = commentuuid.last
+            newsObj["type"] = "comment"
+            newsObj["checked"] = "no"
+            newsObj.saveEventually()
+        }
+        
         //scroll to bottom
         self.tableView.scrollToRow(at: IndexPath(item: commentArray.count - 1, section: 0), at: .bottom, animated:  false)
         
@@ -360,9 +396,6 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
             self.navigationController?.pushViewController(hashvc, animated: true)
             
         }
-        
-        
-        
         cell.usernameBtn.layer.setValue(indexPath, forKey: "index")
         
        return cell
@@ -473,7 +506,7 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
                     
                     for object in objects! {
                         
-                        (object as AnyObject).deleteEventually()
+                        (object as AnyObject).deleteEventually!()
                     }
                 }else {
                     print(error?.localizedDescription)
@@ -489,6 +522,19 @@ class CommentVC: UIViewController, UITextViewDelegate,UITableViewDelegate,UITabl
                 if error == nil {
                     
                     (object as AnyObject).deleteEventually()
+                }
+            })
+            
+            // STEP 3. 删除评论和@mention的消息通知
+            let newsQuery = AVQuery(className: "News")
+            newsQuery.whereKey("by", equalTo: cell.usernameBtn.titleLabel!.text)
+            newsQuery.whereKey("to", equalTo: commentowner.last!)
+            newsQuery.whereKey("type", containedIn: ["mention", "comment"])
+            newsQuery.findObjectsInBackground({ (objects:[Any]?, error:Error?) in
+                if error == nil {
+                    for object in objects! {
+                        (object as AnyObject).deleteEventually!()
+                    }
                 }
             })
             
