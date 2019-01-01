@@ -19,10 +19,6 @@ class GuestVC: UICollectionViewController {
     //界面对象
     var refresher: UIRefreshControl!
     var page: Int = 12
-
-    
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
